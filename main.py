@@ -17,7 +17,11 @@ def show_post(index):
     for blog_post in all_posts: # Iterate through the dictionary
         if blog_post["id"] == index: # Check if the index matches the id of the blog post
             requested_post = blog_post # If it does, assign the blog post to the variable
-    return render_template("post.html", post=requested_post)
+    return render_template("blog-post.html", post=requested_post)
+
+@app.route('/about')
+def about():
+    return render_template("about.html") # Render the about.html template
 
 if __name__ == "__main__":
     app.run(debug=True)
