@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
-    <title>DevBlog - Bootstrap 5 Blog Template For Developers</title>
+    <title>Notes by Alice</title>
     
     <!-- Meta -->
     <meta charset="utf-8">
@@ -15,78 +15,138 @@
 	<script defer src="/static/assets/fontawesome/js/all.min.js"></script>
     
     <!-- Theme CSS -->  
-    <link id="theme-style" rel="stylesheet" href="/static/assets/css/theme-1.css">
-    
-
+    <link href="/static/assets/css/theme-8.css" id="theme-style" rel="stylesheet">
 </head> 
 
 <body>
     
-    <header class="header text-center">	    
-	    <h1 class="blog-name pt-lg-4 mb-0"><a class="no-text-decoration" href="{{ url_for('get_all_posts') }}">Anthony's Blog</a></h1>
-        
-	    <nav class="navbar navbar-expand-lg navbar-dark" >
-           
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			<div id="navigation" class="collapse navbar-collapse flex-column" >
-				<div class="profile-section pt-3 pt-lg-0">
-				    <img class="profile-image mb-3 rounded-circle mx-auto" src="/static/assets/images/profile.png" alt="image" >
-					
-					<div class="bio mb-3">Hi, my name is Anthony Doe. Briefly introduce yourself here. You can also provide a link to the about page.<br><a href="{{ url_for('about') }}">Find out more about me</a></div><!--//bio-->
-					<ul class="social-list list-inline py-3 mx-auto">
-			            <li class="list-inline-item"><a href="#"><i class="fab fa-twitter fa-fw"></i></a></li>
-			            <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin-in fa-fw"></i></a></li>
-			            <li class="list-inline-item"><a href="#"><i class="fab fa-github-alt fa-fw"></i></a></li>
-			            <li class="list-inline-item"><a href="#"><i class="fab fa-stack-overflow fa-fw"></i></a></li>
-			            <li class="list-inline-item"><a href="#"><i class="fab fa-codepen fa-fw"></i></a></li>
-			        </ul><!--//social-list-->
-			        <hr> 
-				</div><!--//profile-section-->
-				
-				<ul class="navbar-nav flex-column text-start">
-					<li class="nav-item">
-					    <a class="nav-link" href="{{ url_for('get_all_posts') }}"><i class="fas fa-home fa-fw me-2"></i>Blog Home <span class="sr-only">(current)</span></a>
-					</li>
-					<li class="nav-item">
-					    <a class="nav-link active" href="{{ url_for('about') }}"><i class="fas fa-user fa-fw me-2"></i>About Me</a>
-					</li>
-				</ul>
-				
-				<div class="my-2 my-md-3">
-					
-				    <a class="btn btn-primary" href="https://themes.3rdwavemedia.com/" target="_blank">Get in Touch</a>
-				    
-				</div>
-			</div>
-		</nav>
+        <header class="header text-center">
+      <h1 class="blog-name pt-lg-4 mb-0">
+        <a class="no-text-decoration" href="{{ url_for('get_all_posts') }}">Notes by Alice</a>
+      </h1>
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <button aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navigation" data-bs-toggle="collapse" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse flex-column" id="navigation">
+          <div class="profile-section pt-3 pt-lg-0">
+            <img alt="image" class="profile-image mb-3 rounded-circle mx-auto" src="/static/assets/images/profile.png">
+            <div class="bio mb-3">Hi 👋 I'm Alice Dias, I love enjoy building backend systems that make things simpler, smarter and more automated. I love learning, experimenting and sharing what I discover along the way. <br>
+              <a href="{{ url_for('about') }}">Find out more about me</a>
+            </div>
+            <!--//bio-->
+            <ul class="social-list list-inline py-3 mx-auto">
+              <li class="list-inline-item">
+                <a href="https://www.linkedin.com/in/alice-moreira-dias">
+                  <i class="fab fa-linkedin-in fa-fw"></i>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/heyliceeee">
+                  <i class="fab fa-github fa-fw"></i>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://cv-alice-dias.vercel.app">
+                  <i class="fa fa-globe-europe fa-fw"></i>
+                </a>
+              </li>
+            </ul>
+            <!--//social-list-->
+            <hr>
+          </div>
+          <!--//profile-section-->
+          <ul class="navbar-nav flex-column text-start">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('get_all_posts') }}">
+                <i class="fas fa-home fa-fw me-2"></i>Home <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{{ url_for('about') }}">
+                <i class="fas fa-user fa-fw me-2"></i>About Me </a>
+            </li>
+          </ul>
+          <div class="my-2 my-md-3">
+            <a class="btn btn-primary" href="https://cv-alice-dias.vercel.app/#contact" target="_blank">Get in Touch</a>
+          </div>
+        </div>
+      </nav>
     </header>
     
     <div class="main-wrapper">
 	    	    
 	    <article class="about-section py-5">
-		    <div class="container">
-			    <h2 class="title mb-3">About Me</h2>
-			    
-			    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. </p>
-			    <figure><img class="img-fluid" src="/static/assets/images/about-me.jpg" alt="image"></figure>
-			    <h5 class="mt-5">About The Blog</h5>
-			    <p>Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus.</p>
-			    <h5 class="mt-5">My Skills and Experiences</h5>
-			    <p>Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.</p>
-			    <h5 class="mt-5">Side Projects</h5>
-			    <p>Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.</p>
-			    
-			    <figure><a href="https://made4dev.com"><img class="img-fluid" src="/static/assets/images/promo-banner.jpg" alt="image"></a></figure>
-		    </div>
-	    </article><!--//about-section-->
-	    
+    <div class="container">
+        <h2 class="title mb-3">About Me</h2>
+
+        <p>
+            Hi 👋 I'm <strong>Alice Dias</strong>, a Backend Software Engineer focused on building
+            <strong>reliable, scalable and automated systems</strong>. I work across backend engineering,
+            automation and time‑series Machine Learning, and I’ve also contributed as a
+            <strong>Scrum Master</strong> supporting teams with organization and delivery.
+        </p>
+
+        <h4 class="mt-5">Professional Experience</h4>
+
+        <ul>
+            <li>
+                <strong>Scrum Master & Technical Lead — ESTG</strong>
+                Led 10+ engineering projects, coordinated Agile ceremonies and improved team productivity by 25%.
+            </li>
+
+            <li class="mt-3">
+                <strong>Data Science Intern — ESTG</strong>
+                Built forecasting models (R² ≈ 0.90), optimized LSTM/NARX and automated pipelines with Python.
+            </li>
+
+            <li class="mt-3">
+                <strong>Web Developer — NEI</strong>
+                Developed core institutional website pages using React and Material‑UI.
+            </li>
+
+            <li class="mt-3">
+                <strong>Software Engineer Intern — Assistência Online</strong>
+                Built an automated SMS scheduling system reducing manual work by ~80%.
+            </li>
+        </ul>
+
+        <h4 class="mt-5">My Education Journey</h4>
+
+        <ul>
+            <li>
+                <strong>Python Bootcamp — 100 Days of Code</strong>
+                Python, Automation, APIs, Flask, SQL, ML.
+            </li>
+
+            <li class="mt-3">
+                <strong>Software Engineering Degree — ESTG</strong>
+                AI, React, Python, Java, Distributed Systems, REST APIs.
+            </li>
+
+            <li class="mt-3">
+                <strong>CTESP Web & Mobile Development — ESTG</strong>
+                JavaScript, React, Node.js, SQL, Mobile Development.
+            </li>
+        </ul>
+
+        <h4 class="mt-5">Portfolio Highlights</h4>
+
+        <ul>
+            <li><strong>Product Carbon Footprint System</strong> — Java, UML, CI/CD</li>
+            <li><strong>JobMatch AI</strong> — Python, LLMs, Selenium, Automation</li>
+            <li><strong>Energy Forecasting</strong> — Python, Time Series, ML</li>
+            <li><strong>Candy Crush Automation</strong> — YOLOv8, Computer Vision</li>
+            <li><strong>LevExpress</strong> — Java, Spring Boot, Camunda BPM</li>
+        </ul>
+    </div>
+</article>
+
+
 	    <section class="cta-section theme-bg-light py-5">
 		    <div class="container text-center">
 			    <h2 class="heading">Newsletter</h2>
-			    <div class="intro">Welcome to my blog. Subscribe and get my latest blog post in your inbox.</div>
+			    <div class="intro">Welcome to my blog. If you enjoy my posts, you can get the next ones directly in your inbox.</div>
 			    <div class="single-form-max-width pt-3 mx-auto">
 				    <form class="signup-form row g-2 g-lg-2 align-items-center">
 	                    <div class="col-12 col-md-9">
@@ -107,15 +167,12 @@
             <small class="copyright">Designed with <span class="sr-only">love</span><i class="fas fa-heart" style="color: #fb866a;"></i> by <a href="https://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers</small>
 		   
 	    </footer>
-    
     </div><!--//main-wrapper-->
     
        
     <!-- Javascript -->          
     <script src="/static/assets/plugins/popper.min.js"></script>
     <script src="/static/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    
-
 </body>
 </html> 
 
