@@ -3,9 +3,6 @@ import os
 import smtplib
 from flask import Flask, render_template, request
 from email.message import EmailMessage
-from dotenv import load_dotenv
-
-load_dotenv()
 
 smtp_host = os.getenv("SMTP_HOST")
 smtp_port = int(os.getenv("SMTP_PORT"))
