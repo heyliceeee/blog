@@ -1,77 +1,100 @@
 [
-  {
-    "id": 1,
-    "title": "The Life of Cactus",
-    "subtitle": "Who knew that cacti lived such interesting lives.",
-    "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
-    "body": "Nori grape silver beet broccoli kombu beet greens fava bean potato quandong celery...",
-    "published": "2026-03-12",
-    "reading_time": "4 min read",
-    "comments_count": 3,
-    "comments": [
-      { "author": "Ana Ribeiro", "text": "I never imagined a cactus could have such personality. This post made me smile.", "date": "2026-03-13" },
-      { "author": "João Martins", "text": "Loved how light and fun this was. Now I want to buy a cactus.", "date": "2026-03-14" },
-      { "author": "Mariana Lopes", "text": "This absolutely made my day. Simple, funny, and unexpectedly charming.", "date": "2026-03-15" }
-    ]
-  },
-  {
-    "id": 2,
-    "title": "Top 15 Things to Do When You Are Bored",
-    "subtitle": "Are you bored? Don't know what to do? Try these top 15 activities.",
-    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
-    "body": "Chase ball of string eat plants, meow, and throw up because I ate plants...",
-    "published": "2026-04-01",
-    "reading_time": "6 min read",
-    "comments_count": 12,
-    "comments": [
-      { "author": "Carlos Figueira", "text": "Tried number 7 and it actually worked. Thanks for the ideas!", "date": "2026-04-02" },
-      { "author": "Rita Santos", "text": "This post should come with a warning: guaranteed laughter.", "date": "2026-04-03" },
-      { "author": "Miguel Duarte", "text": "The part about the cat stealing the chair… too real.", "date": "2026-04-04" }
-    ]
-  },
-  {
-    "id": 3,
-    "title": "Introduction to Intermittent Fasting",
-    "subtitle": "Learn about the newest health craze.",
-    "image": "https://images.unsplash.com/photo-1506784983877-45594efa4cbe",
-    "body": "Cupcake ipsum dolor. Sit amet marshmallow topping cheesecake muffin...",
-    "published": "2026-05-10",
-    "reading_time": "8 min read",
-    "comments_count": 7,
-    "comments": [
-      { "author": "Beatriz Costa", "text": "Finally a simple explanation of intermittent fasting. Loved this!", "date": "2026-05-11" },
-      { "author": "Pedro Nogueira", "text": "I've been doing IF for months and this matches my experience.", "date": "2026-05-12" },
-      { "author": "Sara Almeida", "text": "The writing is so light that it actually made me want to try it.", "date": "2026-05-13" }
-    ]
-  },
-  {
-    "id": 4,
-    "title": "Why Developers Love Dark Mode",
-    "subtitle": "A deep dive into the psychology and practicality behind dark interfaces.",
-    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    "body": "Dark mode isn’t just a trend — it’s a lifestyle...",
-    "published": "2026-06-02",
-    "reading_time": "5 min read",
-    "comments_count": 18,
-    "comments": [
-      { "author": "Hugo Ferreira", "text": "Dark mode is life. This post describes exactly how I feel.", "date": "2026-06-03" },
-      { "author": "Cláudia Moreira", "text": "The part about aesthetics is so true. Everything just looks better.", "date": "2026-06-04" },
-      { "author": "Nuno Rocha", "text": "I only use light mode when my monitor is dying.", "date": "2026-06-05" }
-    ]
-  },
-  {
-    "id": 5,
-    "title": "How I Automated My Entire Morning Routine",
-    "subtitle": "From coffee to calendar — everything runs itself now.",
-    "image": "https://images.unsplash.com/photo-1558002038-1055907df827",
-    "body": "Automation isn’t just for servers. With a few scripts, smart plugs...",
-    "published": "2026-06-20",
-    "reading_time": "3 min read",
-    "comments_count": 5,
-    "comments": [
-      { "author": "Vera Pinto", "text": "This is brilliant. I want my coffee automated too.", "date": "2026-06-21" },
-      { "author": "André Silva", "text": "Waking up with an automatic briefing? Goals.", "date": "2026-06-22" },
-      { "author": "Luís Carvalho", "text": "Loved the smart plug idea. Stealing it.", "date": "2026-06-23" }
-    ]
-  }
+    {
+        "id": 1,
+        "title": "The Life of Cactus",
+        "subtitle": "Who knew that cacti lived such interesting lives.",
+        "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
+        "body": "Nori grape silver beet broccoli kombu beet greens fava bean potato quandong celery...",
+        "published": "2026-03-12",
+        "reading_time": "3 min read",
+        "comments_count": 3,
+        "comments": [
+            {
+                "author": "Ana Ribeiro",
+                "text": "I never imagined a cactus could have such personality. This post made me smile.",
+                "date": "2026-03-13"
+            },
+            {
+                "author": "Jo\u00e3o Martins",
+                "text": "Loved how light and fun this was. Now I want to buy a cactus.",
+                "date": "2026-03-14"
+            },
+            {
+                "author": "Mariana Lopes",
+                "text": "This absolutely made my day. Simple, funny, and unexpectedly charming.",
+                "date": "2026-03-15"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Top 15 Things to Do When You Are Bored",
+        "subtitle": "Are you bored? Don't know what to do? Try these top 15 activities.",
+        "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+        "body": "Chase ball of string eat plants, meow, and throw up because I ate plants...",
+        "published": "2026-04-01",
+        "reading_time": "6 min read",
+        "comments_count": 12,
+        "comments": [
+            {
+                "author": "Carlos Figueira",
+                "text": "Tried number 7 and it actually worked. Thanks for the ideas!",
+                "date": "2026-04-02"
+            },
+            {
+                "author": "Rita Santos",
+                "text": "This post should come with a warning: guaranteed laughter.",
+                "date": "2026-04-03"
+            },
+            {
+                "author": "Miguel Duarte",
+                "text": "The part about the cat stealing the chair\u2026 too real.",
+                "date": "2026-04-04"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Why Developers Love Dark Mode",
+        "subtitle": "A deep dive into the psychology and practicality behind dark interfaces.",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475",
+        "body": "Dark mode isn\u2019t just a trend \u2014 it\u2019s a lifestyle...",
+        "published": "2026-06-02",
+        "reading_time": "10 min read",
+        "comments_count": 18,
+        "comments": [
+            {
+                "author": "Hugo Ferreira",
+                "text": "Dark mode is life. This post describes exactly how I feel.",
+                "date": "2026-06-03"
+            },
+            {
+                "author": "Cl\u00e1udia Moreira",
+                "text": "The part about aesthetics is so true. Everything just looks better.",
+                "date": "2026-06-04"
+            },
+            {
+                "author": "Nuno Rocha",
+                "text": "I only use light mode when my monitor is dying.",
+                "date": "2026-06-05"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Introduction to Intermittent Fasting",
+        "subtitle": "Learn about the newest health craze.",
+        "image": "https://images.unsplash.com/photo-1506784983877-45594efa4cbe",
+        "body": "Cupcake ipsum dolor. Sit amet marshmallow topping cheesecake muffin...",
+        "published": "2026-05-10",
+        "reading_time": "8min read",
+        "comments_count": 0,
+        "comments": [
+            {
+                "author": "",
+                "text": "",
+                "date": ""
+            }
+        ]
+    }
 ]
