@@ -8,7 +8,7 @@ from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Regexp
-from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user
+from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
@@ -41,6 +41,9 @@ db.init_app(app) # Initialize the SQLAlchemy instance with the Flask application
 
 login_manager = LoginManager() # Create an instance of the LoginManager class
 login_manager.init_app(app) # Initialize the LoginManager with the Flask application
+login_manager.login_view = "login_page"
+login_manager.login_message = "You must be logged in to access this page."
+login_manager.login_message_category = "warning"
 
 @app.route('/')
 def get_all_posts():
@@ -91,6 +94,9 @@ def load_user(user_id):
 def login_page():
     form = LoginForm()
 
+    if current_user.is_authenticated: # Check if the user is already logged in
+        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+
     if form.validate_on_submit(): # Check if the form is submitted
         user = User.query.filter_by(email=form.email.data).first() # Get the user from the database
 
@@ -108,9 +114,15 @@ def login_page():
     return render_template('login.html', form=form) # Render the login page
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user() # Log out the user
     return redirect(url_for("login_page")) # Redirect to the login page
+
+@app.route("/blog-data.txt")
+@login_required
+def block_json():
+    return "Access denied", 403
 
 @app.route("/posts")
 @login_required
