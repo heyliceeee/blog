@@ -7,5 +7,5 @@ WTForms
 email-validator
 Flask-Login
 Flask-SQLAlchemy
-Flask-Bootstrap
+Bootstrap-Flask
 Flask-CKEditor
