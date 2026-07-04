@@ -10,6 +10,12 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Regexp
 from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap5
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, Text
+from wtforms.validators import DataRequired, URL
+from flask_ckeditor import CKEditor, CKEditorField
+from datetime import date
 
 load_dotenv()
 
@@ -18,11 +24,30 @@ smtp_port = int(os.getenv("SMTP_PORT"))
 smtp_pass = os.getenv("SMTP_PASSWORD")
 smtp_email = os.getenv("SMTP_EMAIL")
 
-db = SQLAlchemy() # Create an instance of the SQLAlchemy class
+app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") # Set the secret key
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db" # Set the database URI
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # Disable tracking modifications
+Bootstrap5(app)
 
-with open('blog-data.txt', 'r') as file:  # Open the blog data file
-    all_posts = json.load(file)  # Load the JSON data into a Python dictionary
+# CREATE DATABASE
+class Base(DeclarativeBase):
+    pass
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db' # Set the database URI
+db = SQLAlchemy(model_class=Base) # Create an instance of the SQLAlchemy class
+db.init_app(app) # Initialize the SQLAlchemy instance with the Flask application
 
+# CONFIGURE TABLE
+class BlogPost(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True) # Primary key column
+    title: Mapped[str] = mapped_column(String(250), unique=True, nullable=False) # Unique title column
+    subtitle: Mapped[str] = mapped_column(String(250), nullable=False) # Subtitle column
+    image: Mapped[str] = mapped_column(String(250), nullable=False) # Image column
+    published: Mapped[str] = mapped_column(String(250), nullable=False) # Date column
+    body: Mapped[str] = mapped_column(Text, nullable=False) # Body column
+    reading_time: Mapped[str] = mapped_column(String(250), nullable=False) # Reading time column
+    comments_count: Mapped[int] = mapped_column(Integer, nullable=False) # Comments count column
+    comments: Mapped[list] = mapped_column(Text, nullable=False) # Comments column
 class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Regexp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$", message="The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.")])
@@ -32,12 +57,109 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True) # Unique email column
     password = db.Column(db.String(200)) # Password column
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "uma_chave_segura_qualquer" # Set the secret key
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db" # Set the database URI
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # Disable tracking modifications
+with app.app_context(): # Create a context for the database
+    db.create_all() # Create the database tables
 
-db.init_app(app) # Initialize the SQLAlchemy instance with the Flask application
+    if BlogPost.query.count() == 0:
+        sample_posts = [
+            BlogPost(
+                title="How I Built My First Flask App",
+                subtitle="A beginner-friendly journey into backend development",
+                image="https://images.unsplash.com/photo-1518770660436-463b3625b3ac",
+                published="2026-06-12",
+                body=(
+                    "I started this project with zero experience in Flask. "
+                    "What surprised me the most was how quickly everything clicked once I understood routing, "
+                    "templates and SQLAlchemy. In this post, I walk through the exact steps I took, "
+                    "the mistakes I made, and the moment everything finally worked."
+                ),
+                reading_time="6 min read",
+                comments_count=0,
+                comments=json.dumps([
+    {
+        "author": "Miguel Ferreira",
+        "text": "Adorei a forma como explicaste o processo. Senti exatamente o mesmo quando comecei com Flask!",
+        "date": "2026-07-04"
+    },
+    {
+        "author": "Rita Marques",
+        "text": "A parte dos erros silenciosos… tão real. Obrigada por partilhares a tua experiência.",
+        "date": "2026-07-04"
+    },
+    {
+        "author": "João Cardoso",
+        "text": "Este post motivou-me a finalmente começar o meu próprio projeto. Obrigado Alice!",
+        "date": "2026-07-05"
+    }
+]
+)
+            ),
+            BlogPost(
+                title="Why Backend Developers Should Learn Automation",
+                subtitle="Small scripts, big impact",
+                image="https://images.unsplash.com/photo-1555066931-4365d14bab8c",
+                published="2026-06-20",
+                body=(
+                    "Automation is not just about saving time — it's about reducing cognitive load. "
+                    "From cleaning datasets to sending scheduled emails, automation has transformed the way "
+                    "I approach daily tasks. Here are the tools I rely on and the automations that made the biggest difference."
+                ),
+                reading_time="5 min read",
+                comments_count=0,
+                comments=json.dumps([
+    {
+        "author": "Carolina Lopes",
+        "text": "Automação mudou completamente o meu workflow também. Scripts pequenos fazem milagres!",
+        "date": "2026-07-06"
+    },
+    {
+        "author": "Pedro Nunes",
+        "text": "Excelente explicação. Gostava de ver um post só sobre automação com Python.",
+        "date": "2026-07-06"
+    },
+    {
+        "author": "Sofia Almeida",
+        "text": "Concordo totalmente — reduzir carga mental é tão importante quanto poupar tempo.",
+        "date": "2026-07-07"
+    }
+]
+)
+            ),
+            BlogPost(
+                title="The Day I Finally Understood SQLAlchemy",
+                subtitle="ORMs don’t have to be scary",
+                image="https://images.unsplash.com/photo-1526378722484-cc6c0c9a4f87",
+                published="2026-07-01",
+                body=(
+                    "SQLAlchemy felt overwhelming at first — models, sessions, queries, relationships… "
+                    "But once I grasped how the ORM maps Python classes to database tables, everything changed. "
+                    "In this post, I break down the concepts in a simple way and share the cheatsheet I wish I had earlier."
+                ),
+                reading_time="7 min read",
+                comments_count=0,
+                comments=json.dumps([
+    {
+        "author": "Tiago Santos",
+        "text": "SQLAlchemy parecia magia negra até ler isto. Obrigado por simplificares tudo!",
+        "date": "2026-07-08"
+    },
+    {
+        "author": "Beatriz Correia",
+        "text": "A tua explicação sobre ORM vs SQL direto foi a melhor que já vi.",
+        "date": "2026-07-08"
+    },
+    {
+        "author": "Hugo Martins",
+        "text": "Finalmente percebi sessions e commits. Este post salvou-me horas de frustração.",
+        "date": "2026-07-09"
+    }
+]
+)
+            ),
+        ]
+
+        db.session.add_all(sample_posts)
+        db.session.commit()
 
 login_manager = LoginManager() # Create an instance of the LoginManager class
 login_manager.init_app(app) # Initialize the LoginManager with the Flask application
@@ -47,15 +169,18 @@ login_manager.login_message_category = "warning"
 
 @app.route('/')
 def get_all_posts():
-    return render_template("index.html", all_posts=all_posts) # Pass the dictionary to the template
+    " Get all posts from the database "
+    result = db.session.execute(db.select(BlogPost)) # Execute the SQL query
+    posts = result.scalars().all() # Get the results as a list of dictionaries
+    return render_template("index.html", all_posts=posts) # Pass the dictionary to the template
 
 @app.route("/post/<int:index>")
 def show_post(index):
-    requested_post = None # Initialize the variable
-    for blog_post in all_posts: # Iterate through the dictionary
-        if blog_post["id"] == index: # Check if the index matches the id of the blog post
-            requested_post = blog_post # If it does, assign the blog post to the variable
-    return render_template("blog-post.html", post=requested_post)
+    " Show a single post from the database "
+    requested_post = db.get_or_404(BlogPost, index) # Get the post with the given id or return a 404 error
+    comments_list = json.loads(requested_post.comments) # Convert the comments string to a list of dictionaries
+
+    return render_template("blog-post.html", post=requested_post, comments=comments_list) # Render the blog-post.html template with the post data
 
 @app.route('/about')
 def about():
@@ -89,7 +214,7 @@ def send_email(name, email, message):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id)) # Load the user from the database based on the user_id
+    return db.session.get(User, int(user_id)) # Get the user with the given id from the database
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
     form = LoginForm()
@@ -119,71 +244,62 @@ def logout():
     logout_user() # Log out the user
     return redirect(url_for("login_page")) # Redirect to the login page
 
-@app.route("/blog-data.txt")
-@login_required
-def block_json():
-    return "Access denied", 403
-
 @app.route("/posts")
 @login_required
 def posts_crud():
-    return render_template("posts.html", all_posts=all_posts) # Render the posts.html template
+    " posts list "
+    posts = BlogPost.query.all() # Get all posts from the database
+    return render_template("posts.html", all_posts=posts) # Render the posts.html template
 @app.route("/create-post", methods=["GET", "POST"])
 @login_required
 def create_post():
-    if request.method == "POST":
-        new_post = {
-            "id": len(all_posts) + 1,
-            "title": request.form["title"],
-            "subtitle": request.form["subtitle"],
-            "image": request.form["image"],
-            "body": request.form["body"],
-            "published": request.form["published"],
-            "reading_time": request.form["reading_time"] + "min read",
-            "comments_count": 0,
-            "comments": [
-                {"author": "", "text": "", "date": ""}
-            ]
-        } # Create a new post
+    " Create a new post "
+    if request.method == "POST": # Check if the request method is POST
+        new_post = BlogPost(
+            title=request.form["title"],
+            subtitle=request.form["subtitle"],
+            image=request.form["image"],
+            body=request.form["body"],
+            published=request.form["published"],
+            reading_time=request.form["reading_time"] + "min read",
+            comments_count=0,
+            comments=json.dumps([{"author": "", "text": "", "date": ""}])
+        ) # Create a new post instance with the form data
 
-        all_posts.append(new_post) # Add the new post to the dictionary
-
-        with open("blog-data.txt", "w") as file: # Open the blog data file in write mode
-            json.dump(all_posts, file, indent=4) # Dump the dictionary to the file
+        db.session.add(new_post) # Add the new post to the database
+        db.session.commit() # Commit the changes to the database
 
         return redirect(url_for("posts_crud")) # Redirect to the dashboard
     return render_template("create_post.html") # Render the create_post.html template
+
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @login_required
 def edit_post(post_id):
-    post = next((p for p in all_posts if p["id"] == post_id), None) # Find the post with the given id
-
-    if not post: # Check if the post exists
-        return "Post not found", 404 # Return a 404 error if the post doesn't exist'
+    " Edit a post "
+    post = BlogPost.query.get_or_404(post_id) # Get the post with the given id or return a 404 error
 
     if request.method == "POST": # Check if the request method is POST
-        post["title"] = request.form["title"]
-        post["subtitle"] = request.form["subtitle"]
-        post["image"] = request.form["image"]
-        post["body"] = request.form["body"]
-        post["published"] = request.form["published"]
-        post["reading_time"] = request.form["reading_time"]
+        post.title = request.form["title"] # Update the post title with the form data
+        post.subtitle = request.form["subtitle"] # Update the post subtitle with the form data
+        post.image = request.form["image"] # Update the post image with the form data
+        post.body = request.form["body"] # Update the post body with the form data
+        post.published = request.form["published"] # Update the post published date with the form data
+        post.reading_time = request.form["reading_time"] # Update the post reading time with the form data
 
-        with open("blog-data.txt", "w") as file:
-            json.dump(all_posts, file, indent=4)
+        db.session.commit() # Commit the changes to the database
+        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+    return render_template("edit_post.html", post=post) # Render the edit_post.html template with the post data
 
-        return redirect(url_for("posts_crud"))
-    return render_template("edit_post.html", post=post)
 @app.route("/delete-post/<int:post_id>")
 @login_required
 def delete_post(post_id):
-    global all_posts
-    all_posts = [p for p in all_posts if p["id"] != post_id] # Remove the post with the given id from the dictionary
+    " Delete a post "
+    post = BlogPost.query.get_or_404(post_id) # Get the post with the given id or return a 404 error
 
-    with open("blog-data.txt", "w") as file:
-        json.dump(all_posts, file, indent=4)
+    db.session.delete(post) # Delete the post from the database
+    db.session.commit() # Commit the changes to the database
 
-    return redirect(url_for("posts_crud"))
+    return redirect(url_for("posts_crud")) # Redirect to the dashboard
 
 
 with app.app_context(): # Create a context for the database
