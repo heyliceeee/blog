@@ -73,9 +73,9 @@ class EditPostForm(FlaskForm):
 
 with app.app_context(): # Create a context for the database
     db.create_all() # Create the database tables
-    if not User.query.filter_by(email="alice@example.com").first(): # Check if the user doesn't exist in the database
-        hashed = generate_password_hash("Alic3StrongPass123") # Hash the password
-        user = User(email="alice@example.com", password=hashed) # Create a new user instance
+    if not User.query.filter_by(email=os.getenv("EMAIL")).first(): # Check if the user doesn't exist in the database
+        hashed = generate_password_hash(os.getenv("PASSWORD")) # Hash the password
+        user = User(email=os.getenv("EMAIL"), password=hashed) # Create a new user instance
         db.session.add(user) # Add the user to the database
         db.session.commit() # Commit the changes to the database
 

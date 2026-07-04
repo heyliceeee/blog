@@ -1,37 +1,48 @@
 # 📝 Notes by Alice
 
-A clean and elegant blog built with **Flask**, featuring a public blog, an authenticated admin panel, full CRUD for posts, and an SMTP‑powered contact form.  
-Posts are stored in a JSON file, while user authentication is handled through **Flask‑Login** and **SQLAlchemy**.
+A clean and elegant blog built with **Flask**, featuring an authenticated admin panel, **full CRUD for posts**, a rich‑text editor powered by **CKEditor**, user authentication with **Flask‑Login**, and an SMTP‑based contact form.
+
+Posts are stored in a **SQLite** database using **SQLAlchemy**, including title, subtitle, image, HTML content, publication date, reading time, and comments.
 
 ---
 
 ## ✨ Features
 
-### Public Blog
+### 🌐 Public Blog
 - Dynamic homepage listing all posts  
 - Individual post pages  
+- Fully formatted HTML content (CKEditor)  
 - About page  
 - Contact form with SMTP email sending  
 
-### Admin Panel (Protected)
+### 🔐 Admin Panel (Protected)
 - Login with hashed password  
 - Logout  
-- Fully protected routes using Flask‑Login  
-- CRUD operations for posts:
-  - Create  
-  - Edit  
-  - Delete  
+- Fully protected routes using `@login_required`  
+- Complete post management:
+  - Create posts with CKEditor  
+  - Edit posts with CKEditor  
+  - Delete posts  
   - Manage posts in a responsive table view  
 
-### Storage
-- Posts stored in `blog-data.txt` (JSON)  
-- Automatic JSON updates after CRUD actions  
-- SQLite database for user authentication  
+### 🗄 Storage
+- **SQLite + SQLAlchemy** for posts and users  
+- Full post model:
+  - `title`  
+  - `subtitle`  
+  - `image`  
+  - `published`  
+  - `body` (HTML from CKEditor)  
+  - `reading_time`  
+  - `comments_count`  
+  - `comments` (JSON string)  
+- Automatic database updates after CRUD operations  
 
-### UI
+### 🎨 UI
 - Responsive Bootstrap 5 theme  
-- Custom “Notes by Alice” styling  
-- Clean admin interface  
+- Modern layout inspired by the “Notes by Alice” design  
+- CKEditor 4 integrated for rich‑text editing  
+- Clean and intuitive admin interface  
 
 ---
 
@@ -48,29 +59,32 @@ Posts are stored in a JSON file, while user authentication is handled through **
 - `/logout` — logout  
 
 ### Admin Routes (Protected)
-- `/posts` — admin dashboard with table of posts  
-- `/create-post` — create a new post  
+- `/posts` — admin dashboard with post table  
+- `/new-post` — create a new post  
 - `/edit-post/<id>` — edit an existing post  
 - `/delete-post/<id>` — delete a post  
 
-All admin routes require authentication via `@login_required`.
+All admin routes require authentication.
 
 ---
 
 ## 🔐 Security
 
 - Password hashing using `generate_password_hash`  
-- Authentication and session management with Flask‑Login  
+- Authentication and session management with **Flask‑Login**  
+- Secure sessions  
 - Automatic redirect to login when accessing protected routes  
-- Prevents logged‑in users from accessing the login page  
 - Admin user created automatically on first run  
+- CSRF protection via Flask‑WTF  
 
 ---
 
 ## 🛠 Technologies
 
 - Python (Flask, Flask‑Login, SQLAlchemy, smtplib)  
+- Flask‑WTF + WTForms  
+- CKEditor 4 (rich‑text editor)  
 - Jinja2 templating  
 - Bootstrap 5  
-- JSON for post storage  
-- SQLite for user storage  
+- SQLite (posts + users)  
+- JSON for comments
