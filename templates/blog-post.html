@@ -111,7 +111,7 @@
               </figcaption>
             </figure>
             <h4 class="mt-5 mb-3">{{ post.subtitle }}</h4>
-            <p>{{ post.body }}</p>
+            <p>{{ post.body|safe }}</p>
           </div>
           <div class="blog-comments-section">
             <h4 class="mt-5 mb-4">Comments</h4> {% for comment in comments %} <div class="comment-box d-flex align-items-start mb-4">
