@@ -1,126 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Notes by Alice</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Blog Template">
-    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">
-    <link rel="shortcut icon" href="/static/favicon.ico">
+{% extends "base.html" %}
+{% block title %}Create New Post{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Create New Post</h2>
 
-    <!-- FontAwesome -->
-    <script defer src="/static/assets/fontawesome/js/all.min.js"></script>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token() }}
 
-    <!-- Theme CSS -->
-    <link id="theme-style" rel="stylesheet" href="/static/assets/css/theme-8.css">
-</head>
-
-<body>
-    <header class="header text-center">
-        <h1 class="blog-name pt-lg-4 mb-0">
-            <a class="no-text-decoration" href="{{ url_for('get_all_posts') }}">Notes by Alice</a>
-        </h1>
-
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navigation" aria-controls="navigation"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div id="navigation" class="collapse navbar-collapse flex-column">
-                <div class="profile-section pt-3 pt-lg-0">
-                    <img class="profile-image mb-3 rounded-circle mx-auto"
-                         src="/static/assets/images/profile.png" alt="image">
-
-                    <div class="bio mb-3">
-                        Hi 👋 I'm Alice Dias, I love enjoy building backend systems that make things simpler,
-                        smarter and more automated. I love learning, experimenting and sharing what I discover
-                        along the way.<br>
-                        <a href="{{ url_for('about') }}">Find out more about me</a>
-                    </div>
-
-                    <ul class="social-list list-inline py-3 mx-auto">
-                        <li class="list-inline-item"><a href="https://www.linkedin.com/in/alice-moreira-dias"><i class="fab fa-linkedin-in fa-fw"></i></a></li>
-                        <li class="list-inline-item"><a href="https://github.com/heyliceeee"><i class="fab fa-github fa-fw"></i></a></li>
-                        <li class="list-inline-item"><a href="https://cv-alice-dias.vercel.app"><i class="fa fa-globe-europe fa-fw"></i></a></li>
-                    </ul>
-                    <hr>
-                </div>
-
-                <ul class="navbar-nav flex-column text-start">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('get_all_posts') }}">
-                            <i class="fas fa-home fa-fw me-2"></i>Home
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">
-                            <i class="fas fa-user fa-fw me-2"></i>About Me
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('new_post') }}">
-                            <i class="fas fa-pen fa-fw me-2"></i>Create New Post
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="my-2 my-md-3">
-                    <a class="btn btn-primary" href="{{ url_for('login_page') }}">Login</a>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <div class="main-wrapper">
-        <div class="container py-5">
-            <h2 class="mb-4">Create New Post</h2>
-
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.csrf_token() }}
-
-                <div class="mb-3">
-                    {{ form.title.label }}
-                    {{ form.title(class="form-control", placeholder="Enter a title") }}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.subtitle.label }}
-                    {{ form.subtitle(class="form-control", placeholder="Enter a subtitle") }}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.image.label }}
-                    {{ form.image(class="form-control", placeholder="https://example.com/image.jpg") }}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.body.label }}
-                    {{ form.body(class="form-control") }}
-                </div>
-
-                {{ form.submit(class="btn btn-primary") }}
-            </form>
+        <div class="mb-3">
+            {{ form.title.label }}
+            {{ form.title(class="form-control", placeholder="Enter a title") }}
         </div>
 
-        <footer class="footer text-center py-2 theme-bg-dark">
-            <small class="copyright">
-                Designed with <span class="sr-only">love</span>
-                <i class="fas fa-heart" style="color: #fb866a;"></i>
-                by <a href="https://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers
-            </small>
-        </footer>
-    </div>
+        <div class="mb-3">
+            {{ form.subtitle.label }}
+            {{ form.subtitle(class="form-control", placeholder="Enter a subtitle") }}
+        </div>
 
-    <!-- Javascript -->
-    <script src="/static/assets/plugins/popper.min.js"></script>
-    <script src="/static/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <div class="mb-3">
+            {{ form.image.label }}
+            {{ form.image(class="form-control", placeholder="https://example.com/image.jpg") }}
+        </div>
 
-    {{ ckeditor.load() }}
-    {{ ckeditor.config() }}
-</body>
-</html>
+        <div class="mb-3">
+            {{ form.body.label }}
+            {{ form.body(class="form-control") }}
+        </div>
+
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+<footer class="footer text-center py-2 theme-bg-dark">
+    <small class="copyright">
+        Designed with <span class="sr-only">love</span>
+        <i class="fas fa-heart" style="color: #fb866a;"></i>
+        by <a href="https://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers
+    </small>
+</footer>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config() }}
+
+{% endblock %}

@@ -1,13 +1,13 @@
 import json
 import os
 import smtplib
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from email.message import EmailMessage
 from dotenv import load_dotenv
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Regexp
+from wtforms.validators import DataRequired, Email, Regexp, EqualTo, Length
 from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
@@ -49,14 +49,21 @@ class BlogPost(db.Model):
     reading_time: Mapped[str] = mapped_column(String(250), nullable=False) # Reading time column
     comments_count: Mapped[int] = mapped_column(Integer, nullable=False) # Comments count column
     comments: Mapped[str] = mapped_column(Text, nullable=False) # Comments column
-class LoginForm(FlaskForm):
+class RegisterForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20),])
     email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired(), Regexp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$", message="The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.")])
+    confirm = PasswordField("Confirm Password", validators=[DataRequired(), EqualTo("password", message="Passwords must match.")])
+    submit = SubmitField("Create Account")
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20)])
     password = PasswordField("Password", validators=[DataRequired(), Regexp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$", message="The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.")])
     submit = SubmitField("Login")
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True) # Primary key column
-    email = db.Column(db.String(100), unique=True) # Unique email column
-    password = db.Column(db.String(200)) # Password column
+    username = db.Column(db.String(100), unique=True, nullable=False) # Unique username column
+    email = db.Column(db.String(100), unique=True, nullable=False) # Unique email column
+    password = db.Column(db.String(200), nullable=False) # Password column
 class CreatePostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()]) # Title field
     subtitle = StringField("Subtitle", validators=[DataRequired()]) # Subtitle field
@@ -73,11 +80,6 @@ class EditPostForm(FlaskForm):
 
 with app.app_context(): # Create a context for the database
     db.create_all() # Create the database tables
-    if not User.query.filter_by(email=os.getenv("EMAIL")).first(): # Check if the user doesn't exist in the database
-        hashed = generate_password_hash(os.getenv("PASSWORD")) # Hash the password
-        user = User(email=os.getenv("EMAIL"), password=hashed) # Create a new user instance
-        db.session.add(user) # Add the user to the database
-        db.session.commit() # Commit the changes to the database
 
 login_manager = LoginManager() # Create an instance of the LoginManager class
 login_manager.init_app(app) # Initialize the LoginManager with the Flask application
@@ -141,10 +143,10 @@ def login_page():
         return redirect(url_for("posts_crud")) # Redirect to the dashboard
 
     if form.validate_on_submit(): # Check if the form is submitted
-        user = User.query.filter_by(email=form.email.data).first() # Get the user from the database
+        user = User.query.filter_by(username=form.username.data).first() # Get the user with the given username
 
         if not user: # Check if the user exists
-            form.email.errors.append("Email not found.") # Add an error message
+            form.username.errors.append("Username not found.") # Add an error message
             return render_template("login.html", form=form) # Render the login page with the form
 
         if not check_password_hash(user.password, form.password.data): # Check if the password is correct
@@ -153,8 +155,23 @@ def login_page():
 
         login_user(user) # Log in the user
         return redirect(url_for('posts_crud')) # Redirect to the dashboard
-
     return render_template('login.html', form=form) # Render the login page
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+
+    if current_user.is_authenticated: # Check if the user is already logged in
+        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+
+    if form.validate_on_submit():
+        hashed_pw = generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for("login_page"))
+    return render_template("register.html", form=form)
 
 @app.route("/logout")
 @login_required
@@ -181,7 +198,7 @@ def new_post():
             image=form.image.data,
             body=form.body.data,
             published=date.today().strftime("%B %d, %Y"),
-            reading_time=f"{max(1, len(form.body.data.split()) // 200)} min read",
+            reading_time=f"{max(1, len(form.body.data.split()) // 150)} min read",
             comments_count=0,
             comments=json.dumps([])
         )

@@ -9,3 +9,5 @@ Flask-Login
 Flask-SQLAlchemy
 Bootstrap-Flask
 Flask-CKEditor
+Flask_Login
+Werkzeug

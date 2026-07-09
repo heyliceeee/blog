@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<section class="cta-section theme-bg-light py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-9">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" action="{{ url_for('register') }}" novalidate>
+                            {{ form.csrf_token }}
+                            <!-- USERNAME -->
+                            <div class="mb-3">
+                                {{ form.username.label(class="form-label fw-semibold") }}
+                                {{ form.username(class="form-control form-control-lg", placeholder="alicemoreira") }}
+                                {% for err in form.username.errors %}
+                                    <span style="color: red;">{{ err }}</span>
+                                {% endfor %}
+                            </div>
+                            <!-- EMAIL -->
+                            <div class="mb-3">
+                                {{ form.email.label(class="form-label fw-semibold") }}
+                                {{ form.email(class="form-control form-control-lg", placeholder="alice@example.com") }}
+                                {% for err in form.email.errors %}
+                                    <span style="color: red;">{{ err }}</span>
+                                {% endfor %}
+                            </div>
+                            <!-- PASSWORD -->
+                            <div class="mb-3">
+                                {{ form.password.label(class="form-label fw-semibold") }}
+                                {{ form.password(class="form-control form-control-lg", placeholder="••••••••") }}
+                                {% for err in form.password.errors %}
+                                    <span style="color: red;">{{ err }}</span>
+                                {% endfor %}
+                            </div>
+                            <!-- CONFIRM PASSWORD -->
+                            <div class="mb-3">
+                                {{ form.confirm.label(class="form-label fw-semibold") }}
+                                {{ form.confirm(class="form-control form-control-lg", placeholder="••••••••") }}
+                                {% for err in form.confirm.errors %}
+                                    <span style="color: red;">{{ err }}</span>
+                                {% endfor %}
+                            </div>
+                            <!-- SUBMIT -->
+                            {{ form.submit(class="btn btn-primary btn-lg w-100 mt-3") }}
+                            <!-- LINK PARA LOGIN -->
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('login_page') }}" class="text-decoration-none">
+                                    Already have an account? Login
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
