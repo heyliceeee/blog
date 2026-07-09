@@ -1,12 +1,13 @@
 import json
 import os
 import smtplib
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort
 from email.message import EmailMessage
 from dotenv import load_dotenv
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email, Regexp, EqualTo, Length
 from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -49,11 +50,17 @@ class BlogPost(db.Model):
     reading_time: Mapped[str] = mapped_column(String(250), nullable=False) # Reading time column
     comments_count: Mapped[int] = mapped_column(Integer, nullable=False) # Comments count column
     comments: Mapped[str] = mapped_column(Text, nullable=False) # Comments column
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # Primary key column
+    text = db.Column(db.Text, nullable=False) # Text column
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id")) # Foreign key column
+    post_id = db.Column(db.Integer, db.ForeignKey("blog_post.id")) # Foreign key column
+    date = db.Column(db.String(50)) # Date column
 class RegisterForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20),])
+    username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Regexp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$", message="The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.")])
-    confirm = PasswordField("Confirm Password", validators=[DataRequired(), EqualTo("password", message="Passwords must match.")])
+    confirm = PasswordField("Confirm Password", validators=[DataRequired(), EqualTo("password")])
     submit = SubmitField("Create Account")
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20)])
@@ -61,6 +68,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True) # Primary key column
+    role = db.Column(db.String(20), nullable=False, default="user") # Role column
     username = db.Column(db.String(100), unique=True, nullable=False) # Unique username column
     email = db.Column(db.String(100), unique=True, nullable=False) # Unique email column
     password = db.Column(db.String(200), nullable=False) # Password column
@@ -87,6 +95,14 @@ login_manager.login_view = "login_page"
 login_manager.login_message = "You must be logged in to access this page."
 login_manager.login_message_category = "warning"
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs): # Decorate the function with the admin_required decorator
+        if not current_user.is_authenticated or current_user.role != "admin": # Check if the user is authenticated and if the user is not an admin
+            return abort(403) # Return a 403 Forbidden error
+        return f(*args, **kwargs) # Call the decorated function
+    return decorated_function # Return the decorated function
+
 @app.route('/')
 def get_all_posts():
     " Get all posts from the database "
@@ -98,7 +114,7 @@ def get_all_posts():
 def show_post(index):
     " Show a single post from the database "
     requested_post = db.get_or_404(BlogPost, index) # Get the post with the given id or return a 404 error
-    comments_list = json.loads(requested_post.comments) # Convert the comments string to a list of dictionaries
+    comments_list = Comment.query.filter_by(post_id=index).all() # Get all comments for the given post
 
     return render_template("blog-post.html", post=requested_post, comments=comments_list) # Render the blog-post.html template with the post data
 
@@ -140,7 +156,7 @@ def login_page():
     form = LoginForm()
 
     if current_user.is_authenticated: # Check if the user is already logged in
-        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+        return redirect(url_for("get_all_posts")) # Redirect to the dashboard
 
     if form.validate_on_submit(): # Check if the form is submitted
         user = User.query.filter_by(username=form.username.data).first() # Get the user with the given username
@@ -154,7 +170,7 @@ def login_page():
             return render_template("login.html", form=form) # Render the login page with the form
 
         login_user(user) # Log in the user
-        return redirect(url_for('posts_crud')) # Redirect to the dashboard
+        return redirect(url_for("get_all_posts")) # Redirect to the dashboard
     return render_template('login.html', form=form) # Render the login page
 
 @app.route("/register", methods=["GET", "POST"])
@@ -162,13 +178,20 @@ def register():
     form = RegisterForm()
 
     if current_user.is_authenticated: # Check if the user is already logged in
-        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+        return redirect(url_for("get_all_posts")) # Redirect to the dashboard
 
     if form.validate_on_submit():
         hashed_pw = generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
+        new_user = User(
+            role="user",
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_pw
+        )
         db.session.add(new_user)
         db.session.commit()
+
+        logout_user() # Log out the user
 
         return redirect(url_for("login_page"))
     return render_template("register.html", form=form)
@@ -181,6 +204,7 @@ def logout():
 
 @app.route("/posts")
 @login_required
+@admin_required
 def posts_crud():
     " posts list "
     posts = BlogPost.query.all() # Get all posts from the database
@@ -188,6 +212,7 @@ def posts_crud():
 
 @app.route("/new-post", methods=["GET", "POST"])
 @login_required
+@admin_required
 def new_post():
     form = CreatePostForm()
 
@@ -211,6 +236,7 @@ def new_post():
 
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @login_required
+@admin_required
 def edit_post(post_id):
     " Edit a post "
     post = BlogPost.query.get_or_404(post_id) # Get the post with the given id or return a 404 error
@@ -225,11 +251,12 @@ def edit_post(post_id):
         post.reading_time = f"{max(1, len(form.body.data.split()) // 200)} min read" # Update the post reading time
 
         db.session.commit() # Commit the changes to the database
-        return redirect(url_for("posts_crud")) # Redirect to the dashboard
+        return redirect(url_for("get_all_posts")) # Redirect to the dashboard
     return render_template("edit_post.html", form=form, post=post) # Render the edit_post.html template with the form and post data
 
 @app.route("/delete-post/<int:post_id>")
 @login_required
+@admin_required
 def delete_post(post_id):
     " Delete a post "
     post = BlogPost.query.get_or_404(post_id) # Get the post with the given id or return a 404 error
@@ -237,7 +264,89 @@ def delete_post(post_id):
     db.session.delete(post) # Delete the post from the database
     db.session.commit() # Commit the changes to the database
 
-    return redirect(url_for("posts_crud")) # Redirect to the dashboard
+    return redirect(url_for("get_all_posts")) # Redirect to the dashboard
+
+@app.route("/post/<int:post_id>/comment", methods=["POST"])
+@login_required
+def add_comment(post_id):
+    text = request.form.get("comment") # Get the comment text from the form
+
+    if not text: # Check if the comment text is empty
+        return redirect(url_for("show_post", index=post_id)) # Redirect to the post page if the comment text is empty
+
+    new_comment = Comment(
+        text=text,
+        author_id=current_user.id,
+        post_id=post_id,
+        date=date.today().strftime("%B %d, %Y")
+    ) # Create a new Comment instance
+
+    db.session.add(new_comment) # Add the new Comment instance to the database
+    db.session.commit() # Commit the changes to the database
+
+    return redirect(url_for("show_post", index=post_id)) # Redirect to the post page
+
+@app.route("/comment/<int:comment_id>/edit", methods=["POST"])
+@login_required
+def edit_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id) # Get the comment with the given id or return a 404 error
+
+    if comment.author_id != current_user.id: # Check if the current user is the author of the comment
+        return abort(403) # Return a 403 Forbidden error
+
+    new_text = request.form.get("comment") # Get the new comment text from the form
+    comment.text = new_text # Update the comment text
+    db.session.commit() # Commit the changes to the database
+
+    return redirect(url_for("show_post", index=comment.post_id)) # Redirect to the post page
+
+@app.route("/comment/<int:comment_id>/delete")
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id) # Get the comment with the given id or return a 404 error
+
+    if current_user.role == "admin": # Check if the current user is an admin
+        db.session.delete(comment) # Delete the comment from the database
+        db.session.commit() # Commit the changes to the database
+        return redirect(url_for("show_post", index=comment.post_id)) # Redirect to the post page
+
+    if comment.author_id != current_user.id: # Check if the current user is the author of the comment
+        return abort(403) # Return a 403 Forbidden error
+
+    db.session.delete(comment) # Delete the comment from the database
+    db.session.commit() # Commit the changes to the database
+
+    return redirect(url_for("show_post", index=comment.post_id)) # Redirect to the post page
+
+@app.route("/edit-about", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_about():
+    if request.method == "POST": # Check if the request method is POST
+        new_content = request.form.get("content") # Get the new content from the form
+        with open("templates/about.html", "w", encoding="utf-8") as f: # Open the about.html file for writing
+            f.write(new_content) # Write the new content to the file
+        return redirect(url_for("about")) # Redirect to the about page
+
+    with open("templates/about.html", "r", encoding="utf-8") as f: # Open the about.html file for reading
+        content = f.read() # Read the content of the file
+
+    return render_template("edit_about.html", content=content) # Render the edit_about.html template with the content
+
+@app.route("/edit-contact", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_contact():
+    if request.method == "POST": # Check if the request method is POST
+        new_content = request.form.get("content") # Get the new content from the form
+        with open("templates/contact.html", "w", encoding="utf-8") as f: # Open the contact.html file for writing
+            f.write(new_content) # Write the new content to the file
+        return redirect(url_for("contact")) # Redirect to the contact page
+
+    with open("templates/contact.html", "r", encoding="utf-8") as f: # Open the contact.html file for reading
+        content = f.read() # Read the content of the file
+
+    return render_template("edit_contact.html", content=content) # Render the edit_contact.html template with the content
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

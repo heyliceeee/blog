@@ -27,47 +27,113 @@
 
         <div id="navigation" class="collapse navbar-collapse flex-column">
 
-  <div class="profile-section pt-3 pt-lg-0">
-    <img class="profile-image mb-3 rounded-circle mx-auto" src="/static/assets/images/profile.png" alt="image">
+          <!-- PROFILE SECTION -->
+          <div class="profile-section pt-3 pt-lg-0">
+            <img class="profile-image mb-3 rounded-circle mx-auto" src="/static/assets/images/profile.png" alt="image">
 
-    <div class="bio mb-3">
-      Hi 👋 I'm Alice Dias, I love enjoy building backend systems that make things simpler, smarter and more automated.
-      <br>
-      <a href="{{ url_for('about') }}">Find out more about me</a>
-    </div>
+            <div class="bio mb-3">
+              Hi 👋 I'm Alice Dias, I love enjoy building backend systems that make things simpler, smarter and more automated.
+              <br>
+              <a href="{{ url_for('about') }}">Find out more about me</a>
+            </div>
 
-    <ul class="social-list list-inline py-3 mx-auto">
-      <li class="list-inline-item"><a href="https://www.linkedin.com/in/alice-moreira-dias"><i class="fab fa-linkedin-in fa-fw"></i></a></li>
-      <li class="list-inline-item"><a href="https://github.com/heyliceeee"><i class="fab fa-github fa-fw"></i></a></li>
-      <li class="list-inline-item"><a href="https://cv-alice-dias.vercel.app"><i class="fa fa-globe-europe fa-fw"></i></a></li>
-    </ul>
-    <hr>
-  </div>
+            <ul class="social-list list-inline py-3 mx-auto">
+              <li class="list-inline-item"><a href="https://www.linkedin.com/in/alice-moreira-dias"><i class="fab fa-linkedin-in fa-fw"></i></a></li>
+              <li class="list-inline-item"><a href="https://github.com/heyliceeee"><i class="fab fa-github fa-fw"></i></a></li>
+              <li class="list-inline-item"><a href="https://cv-alice-dias.vercel.app"><i class="fa fa-globe-europe fa-fw"></i></a></li>
+            </ul>
+            <hr>
+          </div>
 
-  {% if current_user.is_authenticated %}
-  <!-- MENU PARA UTILIZADORES AUTENTICADOS -->
-  <ul class="navbar-nav flex-column text-start">
-    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_all_posts') }}"><i class="fas fa-home fa-fw me-2"></i>Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="{{ url_for('posts_crud') }}"><i class="fas fa-newspaper fa-fw me-2"></i>Manage Posts</a></li>
-  </ul>
+          <!-- ADMIN MENU -->
+          {% if current_user.is_authenticated and current_user.role == "admin" %}
+          <ul class="navbar-nav flex-column text-start">
 
-  {% else %}
-  <!-- MENU PARA VISITANTES -->
-  <ul class="navbar-nav flex-column text-start">
-    <li class="nav-item"><a class="nav-link" href="{{ url_for('get_all_posts') }}"><i class="fas fa-home fa-fw me-2"></i>Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}"><i class="fas fa-user fa-fw me-2"></i>About Me</a></li>
-    <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}"><i class="fas fa-contact-card fa-fw me-2"></i>Get in Touch</a></li>
-  </ul>
-  {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('get_all_posts') }}">
+                <i class="fas fa-home fa-fw me-2"></i>Home
+              </a>
+            </li>
 
-  <div class="my-2 my-md-3">
-    {% if current_user.is_authenticated %}
-      <a class="btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-      <a class="btn btn-primary" href="{{ url_for('register') }}">Create Account</a>
-    {% endif %}
-  </div>
-</div>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('posts_crud') }}">
+                <i class="fas fa-newspaper fa-fw me-2"></i>Manage Posts
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('edit_about') }}">
+                <i class="fas fa-edit fa-fw me-2"></i>Edit About
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('edit_contact') }}">
+                <i class="fas fa-edit fa-fw me-2"></i>Edit Contact
+              </a>
+            </li>
+
+          </ul>
+
+          <!-- USER MENU -->
+          {% elif current_user.is_authenticated and current_user.role == "user" %}
+          <ul class="navbar-nav flex-column text-start">
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('get_all_posts') }}">
+                <i class="fas fa-home fa-fw me-2"></i>Home
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">
+                <i class="fas fa-user fa-fw me-2"></i>About Me
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">
+                <i class="fas fa-contact-card fa-fw me-2"></i>Get in Touch
+              </a>
+            </li>
+
+          </ul>
+
+          <!-- VISITOR MENU -->
+          {% else %}
+          <ul class="navbar-nav flex-column text-start">
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('get_all_posts') }}">
+                <i class="fas fa-home fa-fw me-2"></i>Home
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">
+                <i class="fas fa-user fa-fw me-2"></i>About Me
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">
+                <i class="fas fa-contact-card fa-fw me-2"></i>Get in Touch
+              </a>
+            </li>
+
+          </ul>
+          {% endif %}
+
+          <!-- LOGIN / LOGOUT BUTTON -->
+          <div class="my-2 my-md-3">
+            {% if current_user.is_authenticated %}
+              <a class="btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+              <a class="btn btn-primary" href="{{ url_for('register') }}">Create Account</a>
+            {% endif %}
+          </div>
+
+        </div>
       </nav>
     </header>
     <!-- MAIN WRAPPER GLOBAL -->

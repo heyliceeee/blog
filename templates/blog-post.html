@@ -46,16 +46,10 @@
     <div class="blog-comments-section">
       <h4 class="mt-5 mb-4">Comments</h4>
       {% for comment in comments %}
-      <div class="comment-box d-flex align-items-start mb-4">
-        <img src="https://i.pravatar.cc/50?u={{ loop.index }}" class="comment-avatar me-3" alt="avatar">
-        <div>
-          <h6 class="mb-1">
-            {{ comment.author }}
-            <small class="text-muted">{{ comment.date }}</small>
-          </h6>
-          <p class="mb-1">{{ comment.text }}</p>
+        <div class="comment">
+          <p>{{ comment.text }}</p>
+          <small>By {{ comment.author_id }} on {{ comment.date }}</small>
         </div>
-      </div>
       {% endfor %}
     </div>
   </div>
