@@ -5,6 +5,7 @@
     <div class="container single-col-max-width">
         <h2 class="heading text-center">Create New Post</h2>
         <form method="POST" class="mt-4">
+            {{ form.csrf_token() }}
             <div class="mb-3">
                 <label class="form-label fw-semibold">Title</label>
                 <input type="text" name="title" class="form-control form-control-lg" required>

@@ -107,6 +107,8 @@ class EditContactForm(FlaskForm):
     footer_link_text = StringField("Footer Link Text", validators=[DataRequired()])
     footer_link_url = StringField("Footer Link URL", validators=[DataRequired()])
     submit = SubmitField("Save Changes")
+class CommentForm(FlaskForm):
+    comment = StringField("Comment", validators=[DataRequired()])
 
 with app.app_context(): # Create a context for the database
     db.create_all() # Create the database tables
@@ -146,7 +148,10 @@ def show_post(index):
     " Show a single post from the database "
     requested_post = db.get_or_404(BlogPost, index) # Get the post with the given id or return a 404 error
     comments_list = db.session.query(Comment, User).join(User, Comment.author_id == User.id).filter(Comment.post_id == index).all() # Get all comments for the post
-    return render_template("blog_post.html", post=requested_post, comments=comments_list) # Render the blog_post.html template with the post data
+
+    form = CommentForm()
+
+    return render_template("blog_post.html", post=requested_post, comments=comments_list, form=form) # Render the blog_post.html template with the post data
 
 @app.route('/about')
 def about():
@@ -294,7 +299,7 @@ def edit_post(post_id):
         return redirect(url_for("get_all_posts")) # Redirect to the dashboard
     return render_template("edit_post.html", form=form, post=post) # Render the edit_post.html template with the form and post data
 
-@app.route("/delete-post/<int:post_id>")
+@app.route("/delete-post/<int:post_id>", methods=["POST"])
 @login_required
 @admin_required
 def delete_post(post_id):
@@ -344,7 +349,7 @@ def edit_comment(comment_id):
 
     return redirect(url_for("show_post", index=comment.post_id)) # Redirect to the post page
 
-@app.route("/comment/<int:comment_id>/delete")
+@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id) # Get the comment with the given id or return a 404 error

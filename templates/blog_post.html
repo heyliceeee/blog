@@ -79,13 +79,12 @@
                     Share your thoughts about this post.
                 </p>
             </div>
-
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10 col-xl-9">
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4 p-md-5">
-
                             <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+                                {{ form.csrf_token() }}
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Your Comment</label>
                                     <textarea name="comment"
@@ -99,14 +98,12 @@
                                     Post Comment
                                 </button>
                             </form>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
     {% else %}
     <section class="cta-section theme-bg-light py-4 mt-5">
         <div class="container text-center">
@@ -124,14 +121,13 @@
 <div id="editCommentModal" class="modal" style="display:none;">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content shadow-lg">
-
       <div class="modal-header">
         <h5 class="modal-title">Edit Comment</h5>
         <button type="button" class="btn-close" onclick="closeEditModal()"></button>
       </div>
-
       <div class="modal-body p-4">
         <form id="editCommentForm" method="POST">
+            {{ form.csrf_token() }}
           <div class="mb-3">
             <label class="form-label fw-semibold">Your Comment</label>
             <textarea name="comment"
@@ -146,7 +142,6 @@
           </button>
         </form>
       </div>
-
     </div>
   </div>
 </div>
