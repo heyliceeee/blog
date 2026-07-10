@@ -11,3 +11,4 @@ Bootstrap-Flask
 Flask-CKEditor
 Flask_Login
 Werkzeug
+psycopg2-binary

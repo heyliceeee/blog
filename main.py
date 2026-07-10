@@ -2,13 +2,12 @@ import json
 import os
 import smtplib
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort
+from flask import Flask, render_template, request, redirect, url_for, abort
 from email.message import EmailMessage
-from dotenv import load_dotenv
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import StringField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Email, Regexp, EqualTo, Length
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import Email, Regexp, EqualTo, Length
 from flask_login import login_user, LoginManager, UserMixin, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
@@ -18,8 +17,6 @@ from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import date
 
-load_dotenv()
-
 smtp_host = os.getenv("SMTP_HOST")
 smtp_port = int(os.getenv("SMTP_PORT"))
 smtp_pass = os.getenv("SMTP_PASSWORD")
@@ -27,7 +24,7 @@ smtp_email = os.getenv("SMTP_EMAIL")
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") # Set the secret key
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///blog.db" # Set the database URI
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL") # Set the database URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # Disable tracking modifications
 Bootstrap5(app) # Initialize Bootstrap5
 
