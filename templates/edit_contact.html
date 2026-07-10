@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Edit Contact{% endblock %}
+{% block content %}
+<section class="cta-section theme-bg-light py-5">
+    <div class="container single-col-max-width">
+        <h2 class="heading text-center">Edit Contact Page</h2>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="mb-3">{{ form.title.label }} {{ form.title(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.description.label }} {{ form.description(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.name_label.label }} {{ form.name_label(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.name_placeholder.label }} {{ form.name_placeholder(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.email_label.label }} {{ form.email_label(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.email_placeholder.label }} {{ form.email_placeholder(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.message_label.label }} {{ form.message_label(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.message_placeholder.label }} {{ form.message_placeholder(class="form-control form-control-lg") }}</div>
+            <div class="mb-3">{{ form.button_text.label }} {{ form.button_text(class="form-control form-control-lg") }}</div>
+            {{ form.submit(class="btn btn-primary btn-lg w-100 mt-3") }}
+        </form>
+    </div>
+</section>
+{{ ckeditor.load() }}
+{{ ckeditor.config() }}
+{% endblock %}

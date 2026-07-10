@@ -1,0 +1,11 @@
+{
+  "title": "Contact me for collaboration",
+  "description": "Reach out today to discuss your project needs and start collaborating on something amazing!",
+  "name_label": "Name",
+  "name_placeholder": "Alice Dias",
+  "email_label": "Email",
+  "email_placeholder": "alice@example.com",
+  "message_label": "Message",
+  "message_placeholder": "Hi!",
+  "button_text": "Send Message"
+}

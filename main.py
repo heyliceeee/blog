@@ -85,6 +85,28 @@ class EditPostForm(FlaskForm):
     body = CKEditorField("Content", validators=[DataRequired()])
     published = StringField("Published Date", validators=[DataRequired()])
     submit = SubmitField("Update")
+class EditAboutForm(FlaskForm):
+    intro = CKEditorField("Intro", validators=[DataRequired()])
+    experience = CKEditorField("Experience", validators=[DataRequired()])
+    education = CKEditorField("Education", validators=[DataRequired()])
+    portfolio = CKEditorField("Portfolio", validators=[DataRequired()])
+    newsletter_title = StringField("Newsletter Title", validators=[DataRequired()])
+    newsletter_text = CKEditorField("Newsletter Text", validators=[DataRequired()])
+    submit = SubmitField("Save Changes")
+class EditContactForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    description = CKEditorField("Description", validators=[DataRequired()])
+    name_label = StringField("Name Label", validators=[DataRequired()])
+    name_placeholder = StringField("Name Placeholder", validators=[DataRequired()])
+    email_label = StringField("Email Label", validators=[DataRequired()])
+    email_placeholder = StringField("Email Placeholder", validators=[DataRequired()])
+    message_label = StringField("Message Label", validators=[DataRequired()])
+    message_placeholder = StringField("Message Placeholder", validators=[DataRequired()])
+    button_text = StringField("Button Text", validators=[DataRequired()])
+    footer_text = StringField("Footer Text", validators=[DataRequired()])
+    footer_link_text = StringField("Footer Link Text", validators=[DataRequired()])
+    footer_link_url = StringField("Footer Link URL", validators=[DataRequired()])
+    submit = SubmitField("Save Changes")
 
 with app.app_context(): # Create a context for the database
     db.create_all() # Create the database tables
@@ -103,6 +125,16 @@ def admin_required(f):
         return f(*args, **kwargs) # Call the decorated function
     return decorated_function # Return the decorated function
 
+def extract_block_content(html):
+    start = html.find("{% block content %}") + len("{% block content %}") # Find the start of the block content
+    end = html.find("{% endblock %}", start) # Find the end of the block content
+    return html[start:end].strip() # Return the block content
+
+def replace_block_content(original_html, new_content):
+    start = original_html.find("{% block content %}") + len("{% block content %}") # Find the start of the block content
+    end = original_html.find("{% endblock %}", start) # Find the end of the block content
+    return original_html[:start] + "\n" + new_content + "\n" + original_html[end:] # Return the original HTML with the new content inserted
+
 @app.route('/')
 def get_all_posts():
     " Get all posts from the database "
@@ -116,19 +148,29 @@ def show_post(index):
     requested_post = db.get_or_404(BlogPost, index) # Get the post with the given id or return a 404 error
     comments_list = Comment.query.filter_by(post_id=index).all() # Get all comments for the given post
 
-    return render_template("blog-post.html", post=requested_post, comments=comments_list) # Render the blog-post.html template with the post data
+    return render_template("blog_post.html", post=requested_post, comments=comments_list) # Render the blog_post.html template with the post data
 
 @app.route('/about')
 def about():
-    return render_template("about.html") # Render the about.html template
+    about_path = os.path.join(app.root_path, "instance", "about.json")
+    with open(about_path, "r", encoding="utf-8") as f:
+        about_data = json.load(f)
+    return render_template("about.html", about=about_data)
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method == 'POST': # Check if the request method is POST
-        data = request.form # Get the form data
-        send_email(data['name'], data['email'], data['message']) # Call the send_email function
-        return render_template("contact.html", msg_sent=True) # Render the contact.html template with a success message
-    return render_template("contact.html", msg_sent=False) # Render the contact.html template without a success message
+    contact_path = os.path.join(app.root_path, "instance", "contact.json")
+
+    with open(contact_path, "r", encoding="utf-8") as f:
+        contact_data = json.load(f)
+
+    if request.method == 'POST':
+        data = request.form
+        send_email(data['name'], data['email'], data['message'])
+        return render_template("contact.html", contact=contact_data, msg_sent=True)
+
+    return render_template("contact.html", contact=contact_data, msg_sent=False)
+
 def send_email(name, email, message):
     """
     Send an email using the SMTP protocol
@@ -322,31 +364,58 @@ def delete_comment(comment_id):
 @login_required
 @admin_required
 def edit_about():
-    if request.method == "POST": # Check if the request method is POST
-        new_content = request.form.get("content") # Get the new content from the form
-        with open("templates/about.html", "w", encoding="utf-8") as f: # Open the about.html file for writing
-            f.write(new_content) # Write the new content to the file
-        return redirect(url_for("about")) # Redirect to the about page
+    about_path = os.path.join(app.root_path, "instance", "about.json")
 
-    with open("templates/about.html", "r", encoding="utf-8") as f: # Open the about.html file for reading
-        content = f.read() # Read the content of the file
+    with open(about_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-    return render_template("edit_about.html", content=content) # Render the edit_about.html template with the content
+    form = EditAboutForm(data=data)
+
+    if form.validate_on_submit():
+        updated = {
+            "intro": form.intro.data,
+            "experience": form.experience.data,
+            "education": form.education.data,
+            "portfolio": form.portfolio.data,
+            "newsletter_title": form.newsletter_title.data,
+            "newsletter_text": form.newsletter_text.data
+        }
+
+        with open(about_path, "w", encoding="utf-8") as f:
+            json.dump(updated, f, indent=4)
+
+        return redirect(url_for("about"))
+    return render_template("edit_about.html", form=form)
 
 @app.route("/edit-contact", methods=["GET", "POST"])
 @login_required
 @admin_required
 def edit_contact():
-    if request.method == "POST": # Check if the request method is POST
-        new_content = request.form.get("content") # Get the new content from the form
-        with open("templates/contact.html", "w", encoding="utf-8") as f: # Open the contact.html file for writing
-            f.write(new_content) # Write the new content to the file
-        return redirect(url_for("contact")) # Redirect to the contact page
+    contact_path = os.path.join(app.root_path, "instance", "contact.json")
 
-    with open("templates/contact.html", "r", encoding="utf-8") as f: # Open the contact.html file for reading
-        content = f.read() # Read the content of the file
+    with open(contact_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-    return render_template("edit_contact.html", content=content) # Render the edit_contact.html template with the content
+    form = EditContactForm(data=data)
+
+    if form.validate_on_submit():
+        updated = {
+            "title": form.title.data,
+            "description": form.description.data,
+            "name_label": form.name_label.data,
+            "name_placeholder": form.name_placeholder.data,
+            "email_label": form.email_label.data,
+            "email_placeholder": form.email_placeholder.data,
+            "message_label": form.message_label.data,
+            "message_placeholder": form.message_placeholder.data,
+            "button_text": form.button_text.data
+        }
+
+        with open(contact_path, "w", encoding="utf-8") as f:
+            json.dump(updated, f, indent=4)
+
+        return redirect(url_for("contact"))
+    return render_template("edit_contact.html", form=form)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

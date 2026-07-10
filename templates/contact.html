@@ -3,38 +3,39 @@
 {% block content %}
 <section class="cta-section theme-bg-light py-5">
     <div class="container py-5">
-        <!-- TITLE -->
         <div class="text-center mb-5">
-            <h2 class="h2 mb-3">Contact me for collaboration</h2>
+            <h2 class="h2 mb-3">{{ contact.title }}</h2>
             <p class="text-muted mx-auto" style="max-width: 550px;">
-                Reach out today to discuss your project needs and start collaborating on something amazing!
+                {{ contact.description }}
             </p>
         </div>
-        <!-- FORM ALWAYS CENTERED -->
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-9">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4 p-md-5">
                         <form action="https://getform.io/f/aejrjzwb" method="POST">
+
                             <div class="mb-3">
-                                <label for="name" class="form-label fw-semibold">Name</label>
-                                <input id="name" name="name" type="text" required
-                                       placeholder="Alice Dias" class="form-control form-control-lg">
+                                <label class="form-label fw-semibold">{{ contact.name_label }}</label>
+                                <input type="text" name="name" required
+                                       placeholder="{{ contact.name_placeholder }}"
+                                       class="form-control form-control-lg">
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label fw-semibold">Email</label>
-                                <input id="email" name="email" type="email" required
-                                       placeholder="alice@example.com" class="form-control form-control-lg">
+                                <label class="form-label fw-semibold">{{ contact.email_label }}</label>
+                                <input type="email" name="email" required
+                                       placeholder="{{ contact.email_placeholder }}"
+                                       class="form-control form-control-lg">
                             </div>
                             <div class="mb-3">
-                                <label for="message" class="form-label fw-semibold">Message</label>
-                                <textarea id="message" name="message" required
-                                          placeholder="Hi!"
+                                <label class="form-label fw-semibold">{{ contact.message_label }}</label>
+                                <textarea name="message" required
+                                          placeholder="{{ contact.message_placeholder }}"
                                           class="form-control form-control-lg"
                                           style="min-height: 220px;"></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
-                                Send Message
+                                {{ contact.button_text }}
                             </button>
                         </form>
                     </div>
@@ -43,11 +44,4 @@
         </div>
     </div>
 </section>
-<footer class="footer text-center py-2 theme-bg-dark">
-    <small class="copyright">
-        Designed with <span class="sr-only">love</span>
-        <i class="fas fa-heart" style="color: #fb866a;"></i>
-        by <a href="https://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers
-    </small>
-</footer>
 {% endblock %}
