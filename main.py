@@ -129,7 +129,6 @@ def extract_block_content(html):
     start = html.find("{% block content %}") + len("{% block content %}") # Find the start of the block content
     end = html.find("{% endblock %}", start) # Find the end of the block content
     return html[start:end].strip() # Return the block content
-
 def replace_block_content(original_html, new_content):
     start = original_html.find("{% block content %}") + len("{% block content %}") # Find the start of the block content
     end = original_html.find("{% endblock %}", start) # Find the end of the block content
@@ -146,8 +145,7 @@ def get_all_posts():
 def show_post(index):
     " Show a single post from the database "
     requested_post = db.get_or_404(BlogPost, index) # Get the post with the given id or return a 404 error
-    comments_list = Comment.query.filter_by(post_id=index).all() # Get all comments for the given post
-
+    comments_list = db.session.query(Comment, User).join(User, Comment.author_id == User.id).filter(Comment.post_id == index).all() # Get all comments for the post
     return render_template("blog_post.html", post=requested_post, comments=comments_list) # Render the blog_post.html template with the post data
 
 @app.route('/about')
