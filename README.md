@@ -1,8 +1,8 @@
 # 📝 Notes by Alice
 
-A clean and elegant blog built with **Flask**, featuring an authenticated admin panel, **full CRUD for posts**, a rich‑text editor powered by **CKEditor**, user authentication with **Flask‑Login**, and an SMTP‑based contact form.
+A clean and elegant blog built with **Flask**, now featuring a **complete user system**, **three permission levels**, **full CRUD for posts**, rich‑text editing with **CKEditor**, authentication with **Flask‑Login**, and an SMTP‑based contact form.
 
-Posts are stored in a **SQLite** database using **SQLAlchemy**, including title, subtitle, image, HTML content, publication date, reading time, and comments.
+The project has evolved from **SQLite** to a fully relational **PostgreSQL** database, supporting users, posts, and comments with proper foreign keys and role‑based access control.
 
 ---
 
@@ -13,78 +13,118 @@ Posts are stored in a **SQLite** database using **SQLAlchemy**, including title,
 - Individual post pages  
 - Fully formatted HTML content (CKEditor)  
 - About page  
-- Contact form with SMTP email sending  
+- Contact page with SMTP email sending  
+- Public viewing of comments  
 
-### 🔐 Admin Panel (Protected)
-- Login with hashed password  
-- Logout  
-- Fully protected routes using `@login_required`  
-- Complete post management:
-  - Create posts with CKEditor  
-  - Edit posts with CKEditor  
-  - Delete posts  
-  - Manage posts in a responsive table view  
+### 👥 User System
+- Full **user registration** page  
+- Login / Logout  
+- Password **hashing + salting** using `werkzeug.security`  
+- **Dynamic sidebar** based on user role  
+- **Protected routes** using Flask‑Login  
 
-### 🗄 Storage
-- **SQLite + SQLAlchemy** for posts and users  
-- Full post model:
-  - `title`  
-  - `subtitle`  
-  - `image`  
-  - `published`  
-  - `body` (HTML from CKEditor)  
-  - `reading_time`  
-  - `comments_count`  
-  - `comments` (JSON string)  
-- Automatic database updates after CRUD operations  
+### 🔐 User Roles
 
-### 🎨 UI
-- Responsive Bootstrap 5 theme  
-- Modern layout inspired by the “Notes by Alice” design  
-- CKEditor 4 integrated for rich‑text editing  
+#### **Unauthenticated User**
+- Can view posts, comments, About, and Contact pages  
+
+#### **Authenticated User**
+- Everything an unauthenticated user can do  
+- Can **write, edit, and delete their own comments**  
+
+#### **Admin**
+- Everything an authenticated user can do  
+- Can **create, edit, and delete posts**  
+- Can **delete any comment**  
+- Can **edit the About page**  
+- Can **edit the Contact page**  
+
+---
+
+## 🗄 Database — PostgreSQL + SQLAlchemy
+
+The application now uses **PostgreSQL** with SQLAlchemy ORM models for:
+
+- Users  
+- Posts  
+- Comments  
+
+### Example Model Structure
+
+**User**
+- `id`  
+- `username`  
+- `email`  
+- `password_hash`  
+- `role` (guest / user / admin)
+
+**Post**
+- `id`  
+- `title`  
+- `subtitle`  
+- `image`  
+- `body` (HTML)  
+- `published`  
+- `reading_time`  
+
+**Comment**
+- `id`  
+- `content`  
+- `created_at`  
+- `user_id` (FK)  
+- `post_id` (FK)  
+
+---
+
+## 🎨 UI & Experience
+- Responsive Bootstrap 5 layout  
+- Dynamic sidebar based on user role  
+- CKEditor 4 for rich‑text editing  
 - Clean and intuitive admin interface  
 
 ---
 
-## 🚀 How It Works
+## 🚀 Application Routes
 
 ### Public Routes
-- `/` — homepage with all posts  
+- `/` — homepage  
 - `/post/<id>` — single post page  
-- `/about` — static About page  
-- `/contact` — contact form (GET/POST)  
+- `/about` — About page  
+- `/contact` — Contact form  
 
 ### Authentication Routes
-- `/login` — login page  
+- `/register` — user registration  
+- `/login` — login  
 - `/logout` — logout  
 
-### Admin Routes (Protected)
-- `/posts` — admin dashboard with post table  
-- `/new-post` — create a new post  
-- `/edit-post/<id>` — edit an existing post  
-- `/delete-post/<id>` — delete a post  
+### User Routes (Authenticated)
+- `/comment/<post_id>/new` — create comment  
+- `/comment/<id>/edit` — edit own comment  
+- `/comment/<id>/delete` — delete own comment  
 
-All admin routes require authentication.
+### Admin Routes (Protected)
+- `/posts` — admin dashboard  
+- `/new-post` — create post  
+- `/edit-post/<id>` — edit post  
+- `/delete-post/<id>` — delete post  
+- `/admin/edit-about` — edit About page  
+- `/admin/edit-contact` — edit Contact page  
 
 ---
 
 ## 🔐 Security
-
-- Password hashing using `generate_password_hash`  
-- Authentication and session management with **Flask‑Login**  
-- Secure sessions  
-- Automatic redirect to login when accessing protected routes  
-- Admin user created automatically on first run  
+- Password hashing + salting with `generate_password_hash`  
+- Password verification with `check_password_hash`  
+- Role‑based access control  
+- Protected routes using Flask‑Login  
 - CSRF protection via Flask‑WTF  
 
 ---
 
 ## 🛠 Technologies
-
 - Python (Flask, Flask‑Login, SQLAlchemy, smtplib)  
+- PostgreSQL  
 - Flask‑WTF + WTForms  
-- CKEditor 4 (rich‑text editor)  
+- CKEditor 4  
 - Jinja2 templating  
 - Bootstrap 5  
-- SQLite (posts + users)  
-- JSON for comments
