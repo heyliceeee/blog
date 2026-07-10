@@ -44,13 +44,23 @@
     </div>
     <!-- COMENTÁRIOS -->
     <div class="blog-comments-section">
-      <h4 class="mt-5 mb-4">Comments</h4>
-      {% for comment, author in comments %}
-        <div class="comment">
-          <p>{{ comment.text }}</p>
-          <small>By {{ author.username }} on {{ comment.date }}</small>
-        </div>
-      {% endfor %}
+  <h4 class="mt-5 mb-4">Comments</h4>
+  {% for comment, author in comments %}
+    <div class="comment mb-4 p-3 border rounded shadow-sm">
+      <p class="mb-1">{{ comment.text }}</p>
+      <small class="text-muted d-block mb-2">
+        By <strong>{{ author.username }}</strong> on {{ comment.date }}
+      </small>
+
+      {% if current_user.is_authenticated %}
+        {% if current_user.role == "admin" or current_user.id == comment.author_id %}
+          <a href="{{ url_for('delete_comment', comment_id=comment.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">
+            <i class="fas fa-trash"></i>
+          </a>
+        {% endif %}
+      {% endif %}
+    </div>
+  {% endfor %}
     </div>
     <!-- FORMULÁRIO PARA NOVO COMENTÁRIO -->
     {% if current_user.is_authenticated %}

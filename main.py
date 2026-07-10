@@ -324,6 +324,10 @@ def add_comment(post_id):
     db.session.add(new_comment) # Add the new Comment instance to the database
     db.session.commit() # Commit the changes to the database
 
+    post = BlogPost.query.get(post_id) # Get the post with the given id
+    post.comments_count = Comment.query.filter_by(post_id=post_id).count() # Update the comments_count field in the post
+    db.session.commit() # Commit the changes to the database
+
     return redirect(url_for("show_post", index=post_id)) # Redirect to the post page
 
 @app.route("/comment/<int:comment_id>/edit", methods=["POST"])
@@ -354,6 +358,10 @@ def delete_comment(comment_id):
         return abort(403) # Return a 403 Forbidden error
 
     db.session.delete(comment) # Delete the comment from the database
+    db.session.commit() # Commit the changes to the database
+
+    post = BlogPost.query.get(comment.post_id) # Get the post with the given id
+    post.comments_count = Comment.query.filter_by(post_id=comment.post_id).count() # Update the comments_count field in the post
     db.session.commit() # Commit the changes to the database
 
     return redirect(url_for("show_post", index=comment.post_id)) # Redirect to the post page
